@@ -138,9 +138,9 @@ def swissPairings():
         and append it to the results. This will always ensure that unique set of players 
         are returned in the result set.
     '''
-    for i in range(0, len(rows), 2):
-        result.append(rows[i] + rows[i + 1])
-
+    print rows
+    result = [(rows[i] + rows[i + 1]) for i in range(0,len(rows), 2)]
+    print result
     return result
     DB.close()
 
