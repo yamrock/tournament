@@ -13,7 +13,6 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    #print "TEST"
     DB = connect()
     c = DB.cursor()
     c.execute('''UPDATE standings SET matches = NULL, wins = NULL ''')
@@ -51,7 +50,6 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    #print name 
     DB = connect()
     c = DB.cursor()
     c.execute("""INSERT into standings (name, matches, wins) VALUES (%s, %s, %s);""" , (name, "0", "0"))
@@ -77,7 +75,6 @@ def playerStandings():
     c.execute('''SELECT * from standings ORDER BY wins desc''')
     rows = c.fetchall()
     results = [row for row in rows]
-    #for row in rows:
     return results
     DB.close()
 
@@ -94,7 +91,6 @@ def reportMatch(winner, loser):
     c = DB.cursor()
     c.execute('''SELECT id,matches,wins from standings WHERE id = %s OR id = %s''' % (winner, loser))
     rows = c.fetchall()
-    #print rows
     winner_matches = rows[0][1] + 1 
     loser_matches = rows[1][1] + 1
     winner_wins = rows[0][2] + 1
@@ -105,7 +101,6 @@ def reportMatch(winner, loser):
     c.connection.commit()
     DB.close()
 
-    #c.execute("""UPDATE standings SET matches = """
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -127,8 +122,6 @@ def swissPairings():
     c = DB.cursor()
     c.execute('''SELECT id, name from standings ORDER BY wins desc''')
     rows = c.fetchall()
-    #results = [row for row in rows]
-    #print rows
     ''' Since there are an even number of players, we can take pairs of them at a time 
         and append it to the results. This will always ensure that unique set of players 
         are returned in the result set.
