@@ -4,6 +4,7 @@
 #
 
 import psycopg2
+import bleach
 
 
 def connect():
@@ -56,7 +57,7 @@ def registerPlayer(name):
     DB = connect()
     c = DB.cursor()
     SQL = "INSERT into standings (name, matches, wins) VALUES (%s, %s, %s);"
-    DATA = (name, "0", "0")
+    DATA = (str(bleach.clean(name)), "0", "0")
     c.execute(SQL, DATA)
     c.connection.commit()
     DB.close
@@ -96,7 +97,7 @@ def reportMatch(winner, loser):
     DB = connect()
     c = DB.cursor()
     SQL = "SELECT id,matches,wins from standings WHERE id = %s OR id = %s;"
-    DATA = (winner, loser)
+    DATA = (str(bleach.clean(winner)), str(bleach.clean(loser)))
     c.execute(SQL, DATA)
     rows = c.fetchall()
     winner_matches = rows[0][1] + 1 
@@ -138,9 +139,7 @@ def swissPairings():
         and append it to the results. This will always ensure that unique set of players 
         are returned in the result set.
     '''
-    print rows
     result = [(rows[i] + rows[i + 1]) for i in range(0,len(rows), 2)]
-    print result
     return result
     DB.close()
 
