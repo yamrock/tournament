@@ -15,7 +15,8 @@ def deleteMatches():
     """Remove all the match records from the database."""
     DB = connect()
     c = DB.cursor()
-    c.execute('''UPDATE standings SET matches = NULL, wins = NULL ''')
+    SQL = "UPDATE standings SET matches = NULL, wins = NULL;"
+    c.execute(SQL)
     c.connection.commit()
     DB.close
 
@@ -24,7 +25,8 @@ def deletePlayers():
     """Remove all the player records from the database."""
     DB = connect()
     c = DB.cursor()
-    c.execute('''DELETE from standings ''')
+    SQL = "DELETE from standings;"
+    c.execute(SQL)
     c.connection.commit()
     DB.close
 
@@ -33,7 +35,8 @@ def countPlayers():
     """Returns the number of players currently registered."""
     DB = connect()
     c = DB.cursor()
-    c.execute('''SELECT COUNT(name) from standings''')
+    SQL = "SELECT COUNT(name) from standings;"
+    c.execute(SQL)
     row = c.fetchall()
     count = int(row[0][0])
     DB.close()
@@ -52,7 +55,9 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("""INSERT into standings (name, matches, wins) VALUES (%s, %s, %s);""" , (name, "0", "0"))
+    SQL = "INSERT into standings (name, matches, wins) VALUES (%s, %s, %s);"
+    DATA = (name, "0", "0")
+    c.execute(SQL, DATA)
     c.connection.commit()
     DB.close
 
@@ -72,7 +77,8 @@ def playerStandings():
     """
     DB = connect()
     c = DB.cursor()
-    c.execute('''SELECT * from standings ORDER BY wins desc''')
+    SQL = "SELECT * from standings ORDER BY wins desc;"
+    c.execute(SQL)
     rows = c.fetchall()
     results = [row for row in rows]
     return results
@@ -89,15 +95,20 @@ def reportMatch(winner, loser):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute('''SELECT id,matches,wins from standings WHERE id = %s OR id = %s''' % (winner, loser))
+    SQL = "SELECT id,matches,wins from standings WHERE id = %s OR id = %s;"
+    DATA = (winner, loser)
+    c.execute(SQL, DATA)
     rows = c.fetchall()
     winner_matches = rows[0][1] + 1 
     loser_matches = rows[1][1] + 1
     winner_wins = rows[0][2] + 1
 
-
-    c.execute("""UPDATE standings SET matches = %s, wins = %s where id = %s""", (winner_matches, winner_wins, winner))
-    c.execute("""UPDATE standings SET matches = %s where id = %s""", (loser_matches, loser))
+    SQL = "UPDATE standings SET matches = %s, wins = %s where id = %s;"
+    DATA = (winner_matches, winner_wins, winner)
+    c.execute(SQL, DATA)
+    SQL = "UPDATE standings SET matches = %s where id = %s;"
+    DATA = (loser_matches, loser)
+    c.execute(SQL, DATA)
     c.connection.commit()
     DB.close()
 
@@ -120,7 +131,8 @@ def swissPairings():
     result = []
     DB = connect()
     c = DB.cursor()
-    c.execute('''SELECT id, name from standings ORDER BY wins desc''')
+    SQL = "SELECT id, name from standings ORDER BY wins desc;"
+    c.execute(SQL)
     rows = c.fetchall()
     ''' Since there are an even number of players, we can take pairs of them at a time 
         and append it to the results. This will always ensure that unique set of players 
